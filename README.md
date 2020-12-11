@@ -1,6 +1,16 @@
 # YouChoose
 Anonymous voting system
 
+## Table of Contents
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Run](#run)
+    - [Stop](#stop)
+  - [Deployment](#deployment)
+  - [Built With](#built-with)
+  - [Architecture](#architecture)
+  - [Authors](#authors)
+
 ## Getting Started
 
 ### Prerequisites
@@ -53,6 +63,10 @@ docker-compose down -v
 WIP
 
 ## Built With
+
+WIP
+
+## Architecture
 
 WIP
 

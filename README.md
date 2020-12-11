@@ -33,7 +33,7 @@ docker-compose up
 docker-compose up -d
 
 # rebuild images
-docker-compose up -build
+docker-compose up --build
 ```
 
 ### Stop

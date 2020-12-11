@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+
+  database:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_DB_FILE: /run/secrets/secret_database_db
+      POSTGRES_USER_FILE: /run/secrets/secret_database_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/secret_database_password
+    networks:
+      - database_adminer
+    volumes:
+      - database_volume:/var/lib/postgresql/data
+    secrets:
+      - secret_database_user
+      - secret_database_password
+      - secret_database_db
+
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+    networks:
+      - database_adminer
+
+networks:
+  database_adminer:
+
+volumes:
+  database_volume:
+
+secrets:
+  secret_database_user:
+    file: ./secrets/database_user
+  secret_database_password:
+    file: ./secrets/database_password
+  secret_database_db:
+    file: ./secrets/database_db

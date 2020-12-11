@@ -1,5 +1,5 @@
 # Postgres base image
-FROM postgres
+FROM postgres:12
 
 # Copy init scripts
 COPY ./init-scripts/ /docker-entrypoint-initdb.d/

@@ -7,7 +7,7 @@ Anonymous voting system
 
 Create your secret files:
 
-```console
+```bash
 mkdir secrets
 echo my_super_db       > secrets/database_db
 echo my_super_user     > secrets/database_user
@@ -16,7 +16,7 @@ echo my_super_password > secrets/database_password
 
 You can also run ```secrets.sh``` script to generate those files:
 
-```console
+```bash
 ./secrets.sh
 ```
 
@@ -25,7 +25,7 @@ In order to run this project, you must have installed [docker-compose](https://d
 ### Run
 
 To run the project on a local environment, use:
-```console
+```bash
 # run
 docker-compose up
 
@@ -39,7 +39,7 @@ docker-compose up -build
 ### Stop
 
 To run the the docker stack, use:
-```console
+```bash
 # stop
 docker-compose down
 

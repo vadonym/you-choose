@@ -19,6 +19,17 @@ services:
       - secret_database_password
       - secret_database_db
 
+  email:
+    build:
+      context: ./email
+      dockerfile: Dockerfile
+    environment:
+      EMAIL_ADDRESS: /run/secrets/secret_email_address
+      EMAIL_PASSWORD: /run/secrets/secret_email_password
+    secrets:
+      - secret_email_address
+      - secret_email_password
+
   adminer:
     image: adminer
     ports:
@@ -39,3 +50,7 @@ secrets:
     file: ./secrets/database_password
   secret_database_db:
     file: ./secrets/database_db
+  secret_email_address:
+    file: ./secrets/email_address
+  secret_email_password:
+    file: ./secrets/email_password

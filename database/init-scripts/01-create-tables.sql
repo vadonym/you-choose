@@ -33,3 +33,9 @@ CREATE TABLE IF NOT EXISTS answers (
     option_id INTEGER NOT NULL REFERENCES t_options(id) ON DELETE CASCADE,
     index_order INTEGER NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS activation_tokens (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) NOT NULL UNIQUE,
+    token VARCHAR (64) NOT NULL
+);

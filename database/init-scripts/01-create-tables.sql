@@ -1,7 +1,8 @@
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     temporary BOOLEAN NOT NULL,
-    email VARCHAR (64),
+    email VARCHAR (64) UNIQUE,
+    password VARCHAR (128),
     activated BOOLEAN DEFAULT FALSE NOT NULL,
     nickname VARCHAR (64) NOT NULL,
     created_date TIMESTAMP DEFAULT NOW()

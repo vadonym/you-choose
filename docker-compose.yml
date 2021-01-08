@@ -12,6 +12,7 @@ services:
       POSTGRES_PASSWORD_FILE: /run/secrets/secret_database_password
     networks:
       - database_adminer
+      - database_io
     volumes:
       - database_volume:/var/lib/postgresql/data
     secrets:
@@ -29,6 +30,40 @@ services:
     secrets:
       - secret_email_address
       - secret_email_password
+    networks:
+      - core_email
+
+  io:
+    build:
+      context: ./io
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_USER: /run/secrets/secret_database_user
+      DATABASE_PASSWORD: /run/secrets/secret_database_password
+      DATABASE_DB: /run/secrets/secret_database_db
+    secrets:
+      - secret_database_user
+      - secret_database_password
+      - secret_database_db
+    ports: 
+      - 5000:5000
+    volumes:
+      - ./io:/app
+    networks:
+      - database_io
+      - core_io
+
+  core:
+    build:
+      context: ./core
+      dockerfile: Dockerfile
+    ports: 
+      - 5001:5000
+    volumes:
+      - ./core:/app
+    networks:
+      - core_io
+      - core_email
 
   adminer:
     image: adminer
@@ -39,6 +74,9 @@ services:
 
 networks:
   database_adminer:
+  database_io:
+  core_io:
+  core_email:
 
 volumes:
   database_volume:

@@ -17,11 +17,11 @@ def close_connection(connection):
     connection.close()
 
 
-def insert_user(connection, temporary, email, password, nickname):
+def insert_user(connection, email, password, nickname):
     cursor = connection.cursor()
 
-    sql = "INSERT INTO users (temporary, email, password, nickname) VALUES (%s, %s, %s, %s) RETURNING id"
-    val = (temporary, email, password, nickname)
+    sql = "INSERT INTO users (email, password, nickname) VALUES (%s, %s, %s) RETURNING id"
+    val = (email, password, nickname)
 
     try:
         cursor.execute(sql, val)

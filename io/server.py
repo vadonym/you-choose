@@ -18,13 +18,12 @@ def create_user():
     try:
         body = request.get_json()
 
-        temporary = extract_field_from_body('temporary', body)
         email = extract_field_from_body('email', body)
         password = extract_field_from_body('password', body)
         nickname = extract_field_from_body('nickname', body)
 
-        user_id = database.insert_user(db_connection, temporary,
-                                       email, password, nickname)
+        user_id = database.insert_user(
+            db_connection, email, password, nickname)
 
     except:
         return Response("Bad request.", status=400, mimetype='application/json')

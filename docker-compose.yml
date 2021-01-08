@@ -30,6 +30,8 @@ services:
     secrets:
       - secret_email_address
       - secret_email_password
+    networks:
+      - core_email
 
   io:
     build:
@@ -49,6 +51,19 @@ services:
       - ./io:/app
     networks:
       - database_io
+      - core_io
+
+  core:
+    build:
+      context: ./core
+      dockerfile: Dockerfile
+    ports: 
+      - 5001:5000
+    volumes:
+      - ./core:/app
+    networks:
+      - core_io
+      - core_email
 
   adminer:
     image: adminer
@@ -60,6 +75,8 @@ services:
 networks:
   database_adminer:
   database_io:
+  core_io:
+  core_email:
 
 volumes:
   database_volume:

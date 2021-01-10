@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS heuristics (
 CREATE TABLE IF NOT EXISTS quizzes (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) NOT NULL,
-    short_url VARCHAR (64) NOT NULL,
+    short_url VARCHAR (64) NOT NULL UNIQUE,
     question VARCHAR (256) NOT NULL,
     heuristic_id INTEGER REFERENCES heuristics(id) NOT NULL,
     answers_target INTEGER NOT NULL

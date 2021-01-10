@@ -37,6 +37,42 @@ def insert_user(connection, email, password, nickname):
     return user_id
 
 
+def insert_quiz(connection, user_id, short_url, question, heuristic_id, answers_target):
+    cursor = connection.cursor()
+
+    sql = "INSERT INTO quizzes (user_id, short_url, question, heuristic_id, answers_target) VALUES (%s, %s, %s, %s, %s) RETURNING id"
+    val = (user_id, short_url, question, heuristic_id, answers_target)
+
+    try:
+        cursor.execute(sql, val)
+        connection.commit()
+    except:
+        connection.rollback()
+        raise Exception()
+
+    user_id = cursor.fetchone()[0]
+
+    cursor.close()
+
+    return user_id
+
+
+def insert_option(connection, quiz_id, text):
+    cursor = connection.cursor()
+
+    sql = "INSERT INTO t_options (quiz_id, text) VALUES (%s, %s)"
+    val = (quiz_id, text)
+
+    try:
+        cursor.execute(sql, val)
+        connection.commit()
+    except:
+        connection.rollback()
+        raise Exception()
+
+    cursor.close()
+
+
 def insert_activation_token(connection, user_id, token):
     cursor = connection.cursor()
 

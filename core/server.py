@@ -1,6 +1,7 @@
 from flask import Flask, request, Response, json
 from utils import extract_field_from_body, generate_activation_token
 import io_service
+import email_service
 import security
 
 app = Flask(__name__)
@@ -9,6 +10,25 @@ app = Flask(__name__)
 @app.route('/status', methods=['GET'])
 def status():
     return Response("Server is running!", status=200, mimetype='application/json')
+
+
+@app.route('/api/users/activate/<token>', methods=['GET'])
+def activate_user(token):
+    try:
+
+        data = {
+            'token': token
+        }
+
+        code, _ = io_service.post('/users/activate', data)
+
+        if code == 200:
+            return Response('User activated.', status=201, mimetype='application/json')
+
+        return Response('Bad request.', status=400, mimetype='application/json')
+
+    except Exception as e:
+        return Response(str(e), status=400, mimetype='application/json')
 
 
 @app.route('/api/users', methods=['POST'])
@@ -45,6 +65,13 @@ def create_user():
             }
 
             io_service.post('/activation_tokens', data)
+
+            data = {
+                'email': email,
+                'token': activation_token
+            }
+
+            email_service.get('/', data)
 
             return Response(json.dumps(res), status=201, mimetype='application/json')
 

@@ -1,0 +1,24 @@
+_format_version: "2.1"
+
+services:
+
+  - name: kong_adminer
+    url: http://adminer:8080
+    routes:
+      - name: adminer-service
+        paths:
+          - /adminer
+
+  - name: kong_auth
+    url: http://auth:5000/auth
+    routes:
+      - name: auth-service
+        paths:
+          - /auth
+
+  - name: kong_core
+    url: http://core:5000/api
+    routes:
+      - name: core-service
+        paths:
+          - /api

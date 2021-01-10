@@ -7,6 +7,11 @@ Anonymous voting system
     - [Run](#run)
     - [Stop](#stop)
   - [Deployment](#deployment)
+    - [Create swarm](#create-swarm)
+    - [Copy application](#copy-application)
+    - [Deploy app](#deploy-app)
+    - [Check status](#check-status)
+    - [Remove app](#remove-app)
   - [Built With](#built-with)
   - [Architecture](#architecture)
   - [Authors](#authors)
@@ -60,10 +65,62 @@ docker-compose down
 docker-compose down -v
 ```
 
-
 ## Deployment
 
-WIP
+### Create swarm
+
+```bash
+# create 3 docker machines
+docker-machine create machine-1
+docker-machine create machine-2
+docker-machine create machine-3
+```
+
+```bash
+# init swarm
+docker-machine ssh machine-1
+docker swarm init --advertise-addr <192.168.XXX.XXX>
+exit
+```
+
+```bash
+# join swarm
+docker-machine ssh machine-2
+docker swarm join --token <TOKEN> <192.168.XXX.XXX>:2377
+exit
+docker-machine ssh machine-3
+docker swarm join --token <TOKEN> <192.168.XXX.XXX>:2377
+exit
+```
+
+### Copy application
+```bash
+docker-machine scp docker-compose-stack.yml machine-1:.
+docker-machine scp -r secrets machine-1:.
+docker-machine scp -r kong machine-1:.
+```
+
+### Deploy app
+```bash
+docker-machine ssh machine-1
+docker stack deploy -c docker-compose-stack.yml you-choose
+```
+
+### Check status
+```bash
+docker-machine ssh machine-1
+docker stack ps you-choose
+```
+
+### Remove app
+```bash
+docker-machine ssh machine-1
+docker stack rm you-choose
+exit
+docker-machine rm machine-1
+docker-machine rm machine-2
+docker-machine rm machine-3
+```
 
 ## Built With
 

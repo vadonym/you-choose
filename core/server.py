@@ -1,6 +1,7 @@
 from flask import Flask, request, Response, json
 from utils import extract_field_from_body, generate_activation_token
 import io_service
+import email_service
 import security
 
 app = Flask(__name__)
@@ -45,6 +46,13 @@ def create_user():
             }
 
             io_service.post('/activation_tokens', data)
+
+            data = {
+                'email': email,
+                'token': activation_token
+            }
+
+            email_service.get('/', data)
 
             return Response(json.dumps(res), status=201, mimetype='application/json')
 

@@ -1,0 +1,158 @@
+version: "3.8"
+
+services:
+
+  database:
+    image: rosudavidg/you-choose-database
+    environment:
+      POSTGRES_DB_FILE: /run/secrets/secret_database_db
+      POSTGRES_USER_FILE: /run/secrets/secret_database_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/secret_database_password
+    networks:
+      - database_adminer
+      - database_io
+    deploy:
+      placement:
+        constraints:
+          - "node.role==manager"
+    volumes:
+      - database_volume:/var/lib/postgresql/data
+    secrets:
+      - secret_database_user
+      - secret_database_password
+      - secret_database_db
+
+  email:
+    image: rosudavidg/you-choose-email
+    environment:
+      EMAIL_ADDRESS: /run/secrets/secret_email_address
+      EMAIL_PASSWORD: /run/secrets/secret_email_password
+    secrets:
+      - secret_email_address
+      - secret_email_password
+    networks:
+      - core_email
+
+  io:
+    image: rosudavidg/you-choose-io
+    environment:
+      DATABASE_USER: /run/secrets/secret_database_user
+      DATABASE_PASSWORD: /run/secrets/secret_database_password
+      DATABASE_DB: /run/secrets/secret_database_db
+    secrets:
+      - secret_database_user
+      - secret_database_password
+      - secret_database_db
+    networks:
+      - database_io
+      - core_io
+      - auth_io
+
+  core:
+    image: rosudavidg/you-choose-core
+    networks:
+      - core_io
+      - core_email
+      - auth_core
+      - kong_core
+
+  auth:
+    image: rosudavidg/you-choose-auth
+    environment:
+      AUTH_JWT_KEY: /run/secrets/secret_auth_jwt_key
+    secrets:
+      - secret_auth_jwt_key
+    networks:
+      - auth_io
+      - auth_core
+      - kong_auth
+
+  adminer:
+    image: adminer
+    networks:
+      - database_adminer
+      - kong_adminer
+  
+  kong:
+    image: kong:latest
+    volumes:
+      - ./kong:/usr/local/kong/declarative
+    deploy:
+      placement:
+        constraints:
+          - "node.role==manager"
+    environment:
+      KONG_DATABASE: 'off'
+      KONG_DECLARATIVE_CONFIG: /usr/local/kong/declarative/kong.yml
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001, 0.0.0.0:8444 ssl
+    ports:
+      - 80:8000
+      - 443:8443
+    networks:
+      - kong_auth
+      - kong_core
+      - kong_adminer
+
+  agent:
+    image: portainer/agent
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    networks:
+      - agent_network
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.platform.os == linux]
+
+  portainer:
+    image: portainer/portainer-ce
+    command: -H tcp://tasks.agent:9001 --tlsskipverify
+    ports:
+      - "9000:9000"
+      - "8000:8000"
+    volumes:
+      - portainer_data:/data
+    networks:
+      - agent_network
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+networks:
+  database_adminer:
+  database_io:
+  core_io:
+  core_email:
+  auth_core:
+  auth_io:
+  kong_adminer:
+  kong_auth:
+  kong_core:
+  agent_network:
+    driver: overlay
+    attachable: true
+
+volumes:
+  database_volume:
+  portainer_data:
+
+secrets:
+  secret_database_user:
+    file: ./secrets/database_user
+  secret_database_password:
+    file: ./secrets/database_password
+  secret_database_db:
+    file: ./secrets/database_db
+  secret_email_address:
+    file: ./secrets/email_address
+  secret_email_password:
+    file: ./secrets/email_password
+  secret_auth_jwt_key:
+    file: ./secrets/auth_jwt_key

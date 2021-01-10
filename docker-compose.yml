@@ -52,6 +52,7 @@ services:
     networks:
       - database_io
       - core_io
+      - auth_io
 
   core:
     build:
@@ -64,6 +65,23 @@ services:
     networks:
       - core_io
       - core_email
+      - auth_core
+
+  auth:
+    build:
+      context: ./auth
+      dockerfile: Dockerfile
+    ports: 
+      - 5002:5000
+    environment:
+      AUTH_JWT_KEY: /run/secrets/secret_auth_jwt_key
+    secrets:
+      - secret_auth_jwt_key
+    volumes:
+      - ./auth:/app
+    networks:
+      - auth_io
+      - auth_core
 
   adminer:
     image: adminer
@@ -77,6 +95,8 @@ networks:
   database_io:
   core_io:
   core_email:
+  auth_core:
+  auth_io:
 
 volumes:
   database_volume:
@@ -92,3 +112,5 @@ secrets:
     file: ./secrets/email_address
   secret_email_password:
     file: ./secrets/email_password
+  secret_auth_jwt_key:
+    file: ./secrets/auth_jwt_key

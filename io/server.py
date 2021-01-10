@@ -33,6 +33,53 @@ def create_user():
     return Response(json.dumps({"id": user_id}), status=201, mimetype='application/json')
 
 
+@app.route('/quizzes', methods=['POST'])
+def create_quiz():
+
+    db_connection = database.create_database_connection()
+
+    try:
+        body = request.get_json()
+
+        user_id = extract_field_from_body('user_id', body)
+        short_url = extract_field_from_body('short_url', body)
+        question = extract_field_from_body('question', body)
+        heuristic_id = extract_field_from_body('heuristic_id', body)
+        answers_target = extract_field_from_body('answers_target', body)
+
+        quiz_id = database.insert_quiz(
+            db_connection, user_id, short_url, question, heuristic_id, answers_target)
+
+    except:
+        return Response("Bad request.", status=400, mimetype='application/json')
+    finally:
+        database.close_connection(db_connection)
+
+    return Response(json.dumps({"id": quiz_id}), status=201, mimetype='application/json')
+
+
+@app.route('/options', methods=['POST'])
+def create_options():
+
+    db_connection = database.create_database_connection()
+
+    try:
+        body = request.get_json()
+
+        texts = extract_field_from_body('texts', body)
+        quiz_id = extract_field_from_body('quiz_id', body)
+
+        for text in texts:
+            database.insert_option(db_connection, quiz_id, text)
+
+    except:
+        return Response("Bad request.", status=400, mimetype='application/json')
+    finally:
+        database.close_connection(db_connection)
+
+    return Response(json.dumps({}), status=201, mimetype='application/json')
+
+
 @app.route('/users', methods=['GET'])
 def get_user():
 

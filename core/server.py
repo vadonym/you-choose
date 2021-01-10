@@ -12,6 +12,25 @@ def status():
     return Response("Server is running!", status=200, mimetype='application/json')
 
 
+@app.route('/api/users/activate/<token>', methods=['GET'])
+def activate_user(token):
+    try:
+
+        data = {
+            'token': token
+        }
+
+        code, _ = io_service.post('/users/activate', data)
+
+        if code == 200:
+            return Response('User activated.', status=201, mimetype='application/json')
+
+        return Response('Bad request.', status=400, mimetype='application/json')
+
+    except Exception as e:
+        return Response(str(e), status=400, mimetype='application/json')
+
+
 @app.route('/api/users', methods=['POST'])
 def create_user():
 

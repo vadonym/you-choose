@@ -16,6 +16,11 @@ def get(route, body):
 def post(route, body):
     try:
         res = requests.post(f'{HOST}:{PORT}{route}', json=body)
-        return res.status_code, res.json()
+
+        try:
+            return res.status_code, res.json()
+        except:
+            return res.status_code, None
+
     except:
         raise Exception('Bad request.')

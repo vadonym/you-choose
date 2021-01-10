@@ -33,6 +33,35 @@ def create_user():
     return Response(json.dumps({"id": user_id}), status=201, mimetype='application/json')
 
 
+@app.route('/users', methods=['GET'])
+def get_user():
+
+    db_connection = database.create_database_connection()
+
+    try:
+        body = request.get_json()
+
+        email = extract_field_from_body('email', body)
+
+        user = database.get_user_by_email(db_connection, email)
+
+        data = {
+            'id': user[0],
+            'email': user[1],
+            'password': user[2],
+            'activated': user[3],
+            'nickname': user[4],
+            'created_date': user[5]
+        }
+
+    except:
+        return Response("Bad request.", status=400, mimetype='application/json')
+    finally:
+        database.close_connection(db_connection)
+
+    return Response(json.dumps(data), status=201, mimetype='application/json')
+
+
 @app.route('/users/activate', methods=['POST'])
 def activate_user():
 

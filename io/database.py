@@ -98,3 +98,22 @@ def activate_user(connection, token):
         raise Exception()
 
     cursor.close()
+
+
+def get_user_by_email(connection, email):
+    cursor = connection.cursor()
+
+    sql = "SELECT * FROM users WHERE email = %s"
+    val = (email,)
+
+    try:
+        cursor.execute(sql, val)
+        connection.commit()
+
+        return cursor.fetchone()
+
+    except:
+        connection.rollback()
+        raise Exception()
+
+    cursor.close()

@@ -7,8 +7,10 @@ app = Flask(__name__)
 @app.route('/')
 def send():
     try:
-        email = request.args.get('email')
-        token = request.args.get('token')
+        body = request.get_json()
+
+        email = body['email']
+        token = body['token']
 
         send_activation_link(email, token)
 

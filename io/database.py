@@ -57,7 +57,28 @@ def insert_activation_token(connection, user_id, token):
     return activation_token_id
 
 
-def activate_user(connection, user_id):
+def get_user_id_by_token(connection, token):
+    cursor = connection.cursor()
+
+    sql = "SELECT user_id FROM activation_tokens WHERE token = %s"
+    val = (token,)
+
+    try:
+        cursor.execute(sql, val)
+        connection.commit()
+
+        return cursor.fetchone()[0]
+
+    except:
+        connection.rollback()
+        raise Exception()
+
+    cursor.close()
+
+
+def activate_user(connection, token):
+    user_id = get_user_id_by_token(connection, token)
+
     cursor = connection.cursor()
 
     sql_users = "UPDATE users SET activated = True WHERE id = %s"

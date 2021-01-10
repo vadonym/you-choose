@@ -41,9 +41,9 @@ def activate_user():
     try:
         body = request.get_json()
 
-        user_id = extract_field_from_body('user_id', body)
+        token = extract_field_from_body('token', body)
 
-        database.activate_user(db_connection, user_id)
+        database.activate_user(db_connection, token)
 
     except:
         return Response("Bad request.", status=400, mimetype='application/json')

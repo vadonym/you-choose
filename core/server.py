@@ -119,5 +119,45 @@ def create_quiz():
     return Response(json.dumps({'id': quiz_id}), status=201, mimetype='application/json')
 
 
+@app.route('/api/quizzes/short_url/<short_url>', methods=['GET'])
+def get_quiz_by_short_url(short_url):
+    try:
+        user = get_user(request)
+
+        data = {
+            'user_id': user['id']
+        }
+
+        code, res = io_service.get(f'/quizzes/short_url/{short_url}', data)
+
+        if code == 200:
+            return Response(json.dumps(res), status=200, mimetype='application/json')
+
+        return Response('Bad request.', status=400, mimetype='application/json')
+
+    except Exception as e:
+        return Response(str(e), status=400, mimetype='application/json')
+
+
+@app.route('/api/quizzes/<id>', methods=['GET'])
+def get_quiz(id):
+    try:
+        user = get_user(request)
+
+        data = {
+            'user_id': user['id']
+        }
+
+        code, res = io_service.get(f'/quizzes/{id}', data)
+
+        if code == 200:
+            return Response(json.dumps(res), status=200, mimetype='application/json')
+
+        return Response('Bad request.', status=400, mimetype='application/json')
+
+    except Exception as e:
+        return Response(str(e), status=400, mimetype='application/json')
+
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")

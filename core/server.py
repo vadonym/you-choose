@@ -90,7 +90,6 @@ def create_quiz():
         body = request.get_json()
         question = extract_field_from_body('question', body)
         short_url = extract_field_from_body('short_url', body)
-        heuristic_id = extract_field_from_body('heuristic_id', body)
         answers_target = extract_field_from_body('answers_target', body)
         texts = extract_field_from_body('texts', body)
 
@@ -98,7 +97,6 @@ def create_quiz():
             'user_id': user['id'],
             'question': question,
             'short_url': short_url,
-            'heuristic_id': heuristic_id,
             'answers_target': answers_target
         }
 
@@ -152,6 +150,30 @@ def get_quiz(id):
 
         if code == 200:
             return Response(json.dumps(res), status=200, mimetype='application/json')
+
+        return Response('Bad request.', status=400, mimetype='application/json')
+
+    except Exception as e:
+        return Response(str(e), status=400, mimetype='application/json')
+
+
+@app.route('/api/quizzes/<quiz_id>/answer', methods=['POST'])
+def answer_quiz(quiz_id):
+    try:
+        user = get_user(request)
+
+        body = request.get_json()
+        option_id = extract_field_from_body('option_id', body)
+
+        data = {
+            'user_id': user['id'],
+            'option_id': option_id
+        }
+
+        code, _ = io_service.post(f'/quizzes/{quiz_id}/answer', data)
+
+        if code == 201:
+            return Response('Answer added.', status=201, mimetype='application/json')
 
         return Response('Bad request.', status=400, mimetype='application/json')
 

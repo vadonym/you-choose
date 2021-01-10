@@ -7,17 +7,11 @@ CREATE TABLE IF NOT EXISTS users (
     created_date TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS heuristics (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR (32)
-);
-
 CREATE TABLE IF NOT EXISTS quizzes (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) NOT NULL,
     short_url VARCHAR (64) NOT NULL UNIQUE,
     question VARCHAR (256) NOT NULL,
-    heuristic_id INTEGER REFERENCES heuristics(id) NOT NULL,
     answers_target INTEGER NOT NULL
 );
 
@@ -32,7 +26,7 @@ CREATE TABLE IF NOT EXISTS answers (
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     quiz_id INTEGER NOT NULL REFERENCES quizzes(id) ON DELETE CASCADE,
     option_id INTEGER NOT NULL REFERENCES t_options(id) ON DELETE CASCADE,
-    index_order INTEGER NOT NULL
+    UNIQUE (user_id, quiz_id)
 );
 
 CREATE TABLE IF NOT EXISTS results (

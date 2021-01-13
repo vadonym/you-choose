@@ -235,7 +235,7 @@ def answer(connection, quiz_id, user_id, option_id):
     cursor = connection.cursor()
 
     sql = "INSERT INTO answers (user_id, quiz_id, option_id) VALUES (%s, %s, %s)"
-    val = (quiz_id, user_id, option_id)
+    val = (user_id, quiz_id, option_id)
 
     try:
         cursor.execute(sql, val)

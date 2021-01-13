@@ -14,7 +14,7 @@ def send_activation_link(to_email, token):
     Hello and thanks for registration!\n
     Here is your activation link:\n
     %s\n\n
-    """ % ('https://www.you-choose.online/api/users/activate/' + token)
+    """ % ('http://localhost/api/users/activate/' + token)
 
     email_text = '\r\n'.join(['To: %s' % ','.join(to),
                               'From: %s' % sent_from,

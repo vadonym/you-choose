@@ -1,0 +1,17 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  max-width: 50%;
+  margin: auto;
+  margin-top: 20px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  width: 100%;
+  text-align: center;
+  font-size: 30px;
+  font-weight: 700;
+}

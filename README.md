@@ -14,6 +14,15 @@ Anonymous voting system
     - [Remove app](#remove-app)
   - [Built With](#built-with)
   - [Architecture](#architecture)
+    - [Frontend](#frontend)
+    - [Api Gateway](#api-gateway)
+    - [Auth](#auth)
+    - [Core](#core)
+    - [IO](#io)
+    - [Database](#database)
+    - [Email](#email)
+    - [Adminer](#adminer)
+  - [Screenshots](#screenshots)
   - [Authors](#authors)
 
 ## Getting Started
@@ -124,12 +133,65 @@ docker-machine rm machine-3
 
 ## Built With
 
-WIP
+[Python](https://www.python.org) with [Flask](https://flask.palletsprojects.com/en/1.1.x/) for backend
+
+[React](https://reactjs.org) for frontend
+
+[PostgreSQL](https://www.postgresql.org) for database
+
+[Kong](https://konghq.com/kong/) for Api Gateway
+
+[Docker](https://www.docker.com) for container orchestration
 
 ## Architecture
 
+<img src="./readme-images/08.png">
+
+### Frontend
+
 WIP
+
+### Api Gateway
+
+WIP
+
+### Auth
+
+WIP
+### Core
+
+WIP
+
+### IO
+
+WIP
+
+### Database
+
+WIP
+
+### Email
+
+WIP
+
+### Adminer
+
+WIP
+
+## Screenshots
+
+<img src="./readme-images/01.png" width=400>
+<img src="./readme-images/02.png" width=400>
+<img src="./readme-images/03.png" width=400>
+<img src="./readme-images/04.png" width=400>
+<img src="./readme-images/05.png" width=400>
+<img src="./readme-images/06.png" width=400>
+<img src="./readme-images/07.png" width=400>
 
 ## Authors
 
-WIP
+[Marian-Vlăduț Jorăscu](https://github.com/majmv)
+
+[Gabriel David Roșu](https://github.com/rosudavidg)
+
+[Andrei-Liviu Samoilă](https://github.com/Andrei-Liviu)

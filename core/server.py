@@ -7,7 +7,7 @@ import security
 app = Flask(__name__)
 
 
-@app.route('/status', methods=['GET'])
+@app.route('/api/status', methods=['GET'])
 def status():
     return Response("Server is running!", status=200, mimetype='application/json')
 

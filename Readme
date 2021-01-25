@@ -1,0 +1,109 @@
+========================================================================================================================
+                                                   Aplicatie de sondaj anonim
+========================================================================================================================
+------------------------------------------------------------------------------------------------------------------------
+Autori
+------------------------------------------------------------------------------------------------------------------------
+Marian-Vlăduț Jorăscu
+
+Gabriel David Roșu
+
+Andrei-Liviu Samoilă
+
+------------------------------------------------------------------------------------------------------------------------
+Generarea fisierelor secrets:
+------------------------------------------------------------------------------------------------------------------------
+    mkdir secrets
+    echo my_super_db             > secrets/database_db
+    echo my_super_user           > secrets/database_user
+    echo my_super_password       > secrets/database_password
+    echo my_super_email          > secrets/email_address
+    echo my_super_email_password > secrets/email_password
+    echo my_uuper_auth_jwt_key   > auth_jwt_key
+
+Sau prin rularea secrets.sh:
+    ./secrets.sh
+
+------------------------------------------------------------------------------------------------------------------------
+Rulare
+------------------------------------------------------------------------------------------------------------------------
+Local:
+    docker-compose up
+
+Swarm:
+
+    Initializare swarm:
+        docker-machine create machine-1
+        docker-machine create machine-2
+        docker-machine create machine-3
+
+        docker-machine ssh machine-1
+        docker swarm init --advertise-addr <192.168.XXX.XXX>
+
+        docker-machine ssh machine-2
+        docker swarm join --token <TOKEN> <192.168.XXX.XXX>:2377
+        exit
+        docker-machine ssh machine-3
+        docker swarm join --token <TOKEN> <192.168.XXX.XXX>:2377
+        exit
+
+    Copierea aplicatiei
+        docker-machine scp docker-compose-stack.yml machine-1:.
+        docker-machine scp -r secrets machine-1:.
+        docker-machine scp -r kong machine-1:.
+
+    Deploy
+        docker-machine ssh machine-1
+        docker stack deploy -c docker-compose-stack.yml you-choose
+
+    Stergere
+
+        docker-machine ssh machine-1
+        docker stack rm you-choose
+        exit
+        docker-machine rm machine-1
+        docker-machine rm machine-2
+        docker-machine rm machine-3
+
+
+------------------------------------------------------------------------------------------------------------------------
+Limbaje si tehnologii
+------------------------------------------------------------------------------------------------------------------------
+Python si Flask pentru backend
+React pentru frontend
+PostgreSQL pentru baza de date
+Kong pentru Api Gateway
+
+------------------------------------------------------------------------------------------------------------------------
+Arhitectura (vezi diagrama readme-images/08.png)
+------------------------------------------------------------------------------------------------------------------------
+
+Frontend
+    Este serviciul grafic cu care utilizatorul interactioneaza direct. Acesta trimite cereri HTTP catre api gateway.
+
+Api Gateway
+    Pentru acest microserviciu am utilizat Kong. Acest redirecteaza 3 rute: /adminer, /auth, /api, catre microserviciile
+adminer, auth si core. Am adaugat si un plugin cors, pentru a accepta cereri de la orice sursa si a accepta header-ul
+Authorization.
+
+Auth
+    Este un serviciu pentru autentificare si autorizare. Cererile de autentificare (/login) vin direct de la api gateway
+si sunt initializate imediat la login, iar cererile de autorizare vin de la core, ori de cate ori este nevoie de
+cunoasterea userului, iar acest lucru este realizat prin verificarea tokenului jwt de catre acest serviciu.
+
+Core
+    Este un serviciu REST care primeste cereri HTTP de la frontend si trimite inapoi raspunsuri. Acesta comunica cu
+serviciul de email pentru a trimite link-ul de activare al contului, cu serviciul de auth pentru a autoriza userul si
+cu serviciul de IO, pentru a utiliza baza de date.
+
+IO
+    Este serviciul care comunica cu baza de date. Primeste cereri de la serviciul de core.
+
+Database
+    Baza de date a aplicatiei. Comunica cu IO si adminer.
+
+Email
+    Serviciu care trimite email-uri utilizatorilor.
+
+Adminer
+    Serviciul de admin pentru baza de date.

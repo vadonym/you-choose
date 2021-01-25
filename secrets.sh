@@ -17,4 +17,4 @@ echo $database_user > secrets/database_user
 echo $database_password > secrets/database_password
 echo $email_address > secrets/email_address
 echo $email_password > secrets/email_password
-echo $auth_jwt_key > secret/auth_jwt_key
+echo $auth_jwt_key > secrets/auth_jwt_key

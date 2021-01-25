@@ -73,6 +73,21 @@ services:
       - database_adminer
       - kong_adminer
   
+  frontend:
+    image: rosudavidg/you-choose-frontend
+    ports:
+      - 3000:3000
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+      NODE_ENV: development
+      PROXY: "true"
+    stdin_open: true
+    networks:
+      - frontend_kong
+    volumes:
+      - "./frontend/src/.:/app/src"
+      - "./frontend/public/.:/app/public"
+  
   kong:
     image: kong:latest
     volumes:
@@ -96,6 +111,7 @@ services:
       - kong_auth
       - kong_core
       - kong_adminer
+      - frontend_kong
 
   agent:
     image: portainer/agent
@@ -126,6 +142,7 @@ services:
         constraints: [node.role == manager]
 
 networks:
+  frontend_kong:
   database_adminer:
   database_io:
   core_io:

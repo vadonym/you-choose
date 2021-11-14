@@ -1,5 +1,5 @@
 import './Quiz.css';
-import { Form, Button, Spinner } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import axios from "axios";
 import { useHistory } from "react-router-dom";
@@ -43,8 +43,8 @@ function AnswerQuiz({ quiz, setLoading }) {
 
 function WaitResult() {
     return <Form.Group controlId="formGridShortUrl">
-        <div class="spinner-border text-warning loading-spinner-results" role="status">
-            <span class="sr-only">Loading...</span>
+        <div className="spinner-border text-warning loading-spinner-results" role="status">
+            <span className="sr-only">Loading...</span>
         </div>
         <Form.Label className="waiting-text">Waiting for more answers...</Form.Label>
     </Form.Group>
@@ -59,21 +59,17 @@ function Results({ quiz }) {
         </Form.Group>
 
         <Button variant="success">
-            {quiz.options.filter(e => e['id'] == quiz.result)[0]['text']}
+            {quiz.options.filter(e => e['id'] === quiz.result)[0]['text']}
         </Button>
     </>
 }
 
 function Quiz(props) {
-    const [shortUrl, setShortUrl] = useState(props.match.params.short_url);
+    const shortUrl = props.match.params.short_url;
     const [loading, setLoading] = useState(true)
     const [invalid, setInvalid] = useState(false)
     const [quiz, setQuiz] = useState(undefined)
     const history = useHistory();
-
-    const onClickHome = (event) => {
-        history.go(0)
-    }
 
     const loadQuiz = () => {
         axios
@@ -89,7 +85,6 @@ function Quiz(props) {
             .catch((e) => {
                 setInvalid(true)
                 setLoading(false)
-                // history.push('/')
             });
     }
 
@@ -104,8 +99,8 @@ function Quiz(props) {
     var content = <></>
 
     if (loading) {
-        content = <div class="spinner-border text-warning loading-spinner-quiz" role="status">
-            <span class="sr-only">Loading...</span>
+        content = <div className="spinner-border text-warning loading-spinner-quiz" role="status">
+            <span className="sr-only">Loading...</span>
         </div>
     } else {
         if (invalid) {

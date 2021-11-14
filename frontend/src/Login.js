@@ -1,13 +1,15 @@
 import './Login.css';
-import { Form, Button, Spinner } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
 import { useState } from 'react';
 import { useHistory } from "react-router-dom";
+import Loading from "./Loading.js"
 import axios from "axios";
 
 function Register({ setIsLoggedIn }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [animation, setAnimation] = useState('');
+    const [invalid, setInvalid] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const history = useHistory();
 
@@ -23,20 +25,21 @@ function Register({ setIsLoggedIn }) {
 
     const onClickSubmit = (event) => {
         event.preventDefault()
+        setIsLoading(true);
 
-        setAnimation("grow")
         axios
             .post('http://localhost:80/auth/login', {
                 email, password
             })
             .then((res) => {
                 localStorage.setItem("token", res.data.token);
-                setIsLoggedIn(true)
+                setIsLoggedIn(true);
+                setIsLoading(false);
                 history.push('/')
             })
             .catch((e) => {
-                setAnimation("")
-                alert('Login failed.');
+                setInvalid(true);
+                setIsLoading(false);
             });
     }
 
@@ -45,8 +48,10 @@ function Register({ setIsLoggedIn }) {
         history.push('/register')
     }
 
-    return (
-        <>
+    if (isLoading) {
+        return <Loading />
+    } else {
+        return (
             <Form onSubmit={onClickSubmit} className="custom-card">
                 <Form.Group controlId="formGridEmail">
                     <Form.Label>Email</Form.Label>
@@ -58,24 +63,23 @@ function Register({ setIsLoggedIn }) {
                     <Form.Control type="password" placeholder="Password" onChange={onChangePassword} value={password} />
                 </Form.Group>
 
-                <Button variant="primary" type="submit">
-                    Login
-                    <Spinner
-                        animation={animation}
-                        size="sm"
-                        role="status"
-                        aria-hidden="true"
-                        visible="false"
-                    />
-                </Button>
+                <Form.Group controlId="formGridButtons" id="group-buttons">
+                    {invalid &&
+                        <div class="alert alert-danger invalid-login" role="alert">
+                            Invalid email or password
+                        </div>
+                    }
+                    <Button variant="primary" type="submit">
+                        Login
+                    </Button>
+                    <div className="login-or-divider ">OR</div>
+                    <Button variant="success" onClick={onClickRegister}>
+                        Register
+                    </Button>
+                </Form.Group>
             </Form>
-
-            <div className="login-or-divider "> OR </div>
-            <Button variant="success" type="submit" onClick={onClickRegister}>
-                Register
-            </Button>
-        </>
-    );
+        );
+    }
 }
 
 export default Register;

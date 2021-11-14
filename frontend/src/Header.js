@@ -11,7 +11,7 @@ function Header() {
     }
 
     return (
-        <div className="header" onClick={onClickHeader}>YouChoose.online</div>
+        <div className="header" onClick={onClickHeader}>YouChoose</div>
     );
 }
 

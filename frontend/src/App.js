@@ -70,12 +70,15 @@ function App() {
                 }
               }}
             />
+            <Route
+              render={() => {
+                return <Redirect to="/"></Redirect>;
+              }}
+            />
           </Switch>
         </div>
       </BrowserRouter>
     </div >
-
-
   );
 }
 

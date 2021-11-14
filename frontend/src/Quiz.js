@@ -4,11 +4,12 @@ import { useEffect, useState } from 'react';
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 
-function AnswerQuiz({ quiz }) {
+function AnswerQuiz({ quiz, setLoading }) {
     const history = useHistory();
 
     const onClickSubmit = (event, optionId) => {
         event.preventDefault()
+        setLoading(true)
 
         axios
             .post(`http://localhost:80/api/quizzes/${quiz.id}/answer`, {
@@ -19,76 +20,60 @@ function AnswerQuiz({ quiz }) {
                 },
             })
             .then((res) => {
-                alert('Successfully created.');
                 history.go(0);
             })
             .catch((e) => {
+                setLoading(false)
                 alert('Failed.');
             });
     }
 
-    return (
-        <Form className="custom-card">
-            <Form.Group controlId="formGridShortUrl">
-                <Form.Label>{quiz.question}</Form.Label>
-            </Form.Group>
+    return <>
+        <Form.Group controlId="formGridShortUrl">
+            <Form.Label>{quiz.question}</Form.Label>
+        </Form.Group>
 
-
-            {quiz.options.map((option) => {
-                return <Form.Group controlId="formGridOption">
-                    <Button onClick={e => onClickSubmit(e, option.id)}>
-                        {option.text}
-                        <Spinner
-                            size="sm"
-                            role="status"
-                            aria-hidden="true"
-                            visible="false"
-                        />
-                    </Button>
-                </Form.Group>
-            })}
-
-        </Form>
-    );
+        {quiz.options.map((option) => {
+            return <Button className="option-button" onClick={e => onClickSubmit(e, option.id)}>
+                {option.text}
+            </Button>
+        })}
+    </>
 }
 
 function WaitResult() {
-    return (
-        <Form className="custom-card">
-            <Form.Group controlId="formGridShortUrl">
-                <Form.Label>Waiting for result...</Form.Label>
-            </Form.Group>
-        </Form>
-    );
+    return <Form.Group controlId="formGridShortUrl">
+        <div class="spinner-border text-warning loading-spinner-results" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <Form.Label className="waiting-text">Waiting for more answers...</Form.Label>
+    </Form.Group>
 }
 
-function Results({ quiz }) {
-    return (
-        <Form className="custom-card">
-            <Form.Group controlId="formGridShortUrl">
-                <Form.Label>{quiz.question} Result:</Form.Label>
-            </Form.Group>
 
-            <Form.Group controlId="formGridOption">
-                <Button >
-                    {quiz.options.filter(e => e['id'] == quiz.result)[0]['text']}
-                    <Spinner
-                        size="sm"
-                        role="status"
-                        aria-hidden="true"
-                        visible="false"
-                    />
-                </Button>
-            </Form.Group>
-        </Form>
-    );
+function Results({ quiz }) {
+    return <>
+        <Form.Label>Results</Form.Label>
+        <Form.Group controlId="formGridShortUrl">
+            <Form.Label>{quiz.question}</Form.Label>
+        </Form.Group>
+
+        <Button variant="success">
+            {quiz.options.filter(e => e['id'] == quiz.result)[0]['text']}
+        </Button>
+    </>
 }
 
 function Quiz(props) {
     const [shortUrl, setShortUrl] = useState(props.match.params.short_url);
-    const [loaded, setLoaded] = useState(false)
+    const [loading, setLoading] = useState(true)
+    const [invalid, setInvalid] = useState(false)
     const [quiz, setQuiz] = useState(undefined)
     const history = useHistory();
+
+    const onClickHome = (event) => {
+        history.go(0)
+    }
 
     const loadQuiz = () => {
         axios
@@ -99,30 +84,54 @@ function Quiz(props) {
             })
             .then((res) => {
                 setQuiz(res.data)
-                setLoaded(true)
+                setLoading(false)
             })
             .catch((e) => {
-                history.push('/')
+                setInvalid(true)
+                setLoading(false)
+                // history.push('/')
             });
+    }
+
+    const onClickBack = (event) => {
+        history.push("/")
     }
 
     useEffect(() => {
         loadQuiz()
     }, [])
 
-    if (loaded) {
-        if (quiz.answered) {
+    var content = <></>
+
+    if (loading) {
+        content = <div class="spinner-border text-warning loading-spinner-quiz" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    } else {
+        if (invalid) {
+            content = <div class="alert alert-danger invalid-register" role="alert">
+                Invalid short URL
+            </div>
+        } else if (quiz.answered) {
             if (quiz.has_result) {
-                return <Results quiz={quiz} />
+                content = <Results quiz={quiz} />
             } else {
-                return <WaitResult />
+                content = <WaitResult />
             }
         } else {
-            return <AnswerQuiz quiz={quiz} />
+            content = <AnswerQuiz quiz={quiz} setLoading={setLoading} />
         }
-    } else {
-        return <div>Loading...</div>
     }
+
+    return <Form className="custom-card">
+        {content}
+
+        <div className="home-divider"></div>
+
+        <Button variant="dark" onClick={onClickBack}>
+            Home
+        </Button>
+    </Form>
 }
 
 export default Quiz;

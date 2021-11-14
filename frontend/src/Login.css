@@ -1,6 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Zen+Antique&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dongle:wght@300&display=swap');
+
 .login-or-divider {
     margin-top: 50px;
-    margin-bottom: 20px;
+    margin-bottom: 50px;
     text-align: center;
-    font-weight: 600;
+    font-weight: 300;
+    font-family: 'Dongle', sans-serif;
+    font-size: 30px;
+}
+
+#group-buttons {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 30px;
 }

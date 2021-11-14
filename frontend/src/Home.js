@@ -1,12 +1,13 @@
 import './Home.css';
-import { Form, Button, Spinner } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
 import { useState } from 'react';
-import axios from "axios";
 import { useHistory } from "react-router-dom";
 import jwt from 'jwt-decode'
+import Loading from "./Loading.js"
 
 function Home() {
     const [shortUrl, setShortUrl] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const history = useHistory();
 
@@ -27,41 +28,42 @@ function Home() {
 
     const onClickLogout = (event) => {
         event.preventDefault()
+        setIsLoading(true);
         localStorage.removeItem('token')
         history.go(0)
     }
 
-    return (
-        <>
-            <div className="greet">Hello, {jwt(localStorage.getItem("token")).nickname}!</div>
-            <Form onSubmit={onClickFind} className="custom-card">
-                <Form.Group controlId="formGridShortUrl">
-                    <Form.Label>Find by URL</Form.Label>
-                    <Form.Control placeholder="Enter short URL" onChange={onChangeShortUrl} value={shortUrl} />
-                </Form.Group>
+    if (isLoading) {
+        return <Loading />
+    } else {
+        return (
+            <div className="home">
+                <Form onSubmit={onClickFind} className="custom-card">
+                    <Form.Label>Hello, {jwt(localStorage.getItem("token")).nickname}!</Form.Label>
 
-                <Button variant="primary" type="submit">
-                    Find
-                </Button>
-            </Form>
-            <div className="or-divider"> OR </div>
-            <Form onSubmit={onClickCreate} className="custom-card">
-                <Form.Group controlId="formGridCreate">
-                    <Form.Label>Create new quiz</Form.Label>
-                </Form.Group>
+                    <Form.Group controlId="formGridShortUrl">
+                        <Form.Control placeholder="Short URL" onChange={onChangeShortUrl} value={shortUrl} />
+                    </Form.Group>
 
-                <Button variant="primary" type="submit">
-                    Create
-                </Button>
-            </Form>
-            <div className="logout-divider"></div>
+                    <Button variant="primary" type="submit" disabled={shortUrl === ""}>
+                        Find
+                    </Button>
 
-            <Button variant="dark" type="submit" onClick={onClickLogout}>
-                Log out
-            </Button>
-            {/* </Form> */}
-        </>
-    );
+                    <div className="or-divider">OR</div>
+
+                    <Button variant="success" onClick={onClickCreate}>
+                        Create new quiz
+                    </Button>
+
+                    <div className="logout-divider"></div>
+
+                    <Button variant="dark" type="submit" onClick={onClickLogout}>
+                        Log out
+                    </Button>
+                </Form>
+            </div>
+        );
+    }
 }
 
 export default Home;

@@ -1,15 +1,29 @@
 .or-divider {
-    margin: 20px;
+    margin: 10px;
     text-align: center;
     font-weight: 600;
+    font-weight: 300;
+    font-family: 'Dongle', sans-serif;
+    font-size: 30px;
 }
 
 .logout-divider {
     margin-top: 20px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    text-align: center;
+    font-weight: 300;
+    font-family: 'Dongle', sans-serif;
+    font-size: 30px;
 }
 
 .greet {
     margin: 20px;
     text-align: center;
     font-weight: 600;
+}
+
+.home {
+    width: 100%;
+    /* margin: auto; */
 }

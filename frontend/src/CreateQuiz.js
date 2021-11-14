@@ -1,15 +1,17 @@
 import './CreateQuiz.css';
-import { Form, Button, Spinner } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
 import { useState } from 'react';
 import axios from "axios";
 import { useHistory } from "react-router-dom";
+import Loading from "./Loading.js"
 
 function CreateQuiz() {
     const [shortUrl, setShortUrl] = useState('');
     const [question, setQuestion] = useState('');
     const [answersTarget, setAnswersTarget] = useState('');
     const [options, setOptions] = useState(['', '']);
-    const [animation, setAnimation] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [invalid, setInvalid] = useState(false);
 
     const history = useHistory();
 
@@ -17,14 +19,19 @@ function CreateQuiz() {
         event.preventDefault();
         setShortUrl(event.target.value);
     };
+
     const onChangeQuestion = (event) => {
         event.preventDefault();
         setQuestion(event.target.value);
     };
+
     const onChangeAnswersTarget = (event) => {
         event.preventDefault();
-        setAnswersTarget(event.target.value);
+        if (event.target.value > 0) {
+            setAnswersTarget(event.target.value);
+        }
     };
+
     const onChangeOption = (event, id) => {
         event.preventDefault();
         let optionsClone = [...options]
@@ -36,8 +43,8 @@ function CreateQuiz() {
 
     const onClickSubmit = (event) => {
         event.preventDefault()
+        setIsLoading(true);
 
-        setAnimation("grow")
         axios
             .post('http://localhost:80/api/quizzes', {
                 short_url: shortUrl, question, answers_target: answersTarget, texts: options
@@ -47,12 +54,12 @@ function CreateQuiz() {
                 },
             })
             .then((res) => {
-                alert('Successfully created.');
+                setIsLoading(false);
                 history.push(`/quiz/${shortUrl}`)
             })
             .catch((e) => {
-                setAnimation("")
-                alert('Failed.');
+                setInvalid(true);
+                setIsLoading(false);
             });
     }
 
@@ -64,49 +71,62 @@ function CreateQuiz() {
         setOptions(optionsClone)
     }
 
-    return (
-        <Form onSubmit={onClickSubmit} className="custom-card">
-            <Form.Group controlId="formGridShortUrl">
-                <Form.Label>Short URL</Form.Label>
-                <Form.Control placeholder="Enter short URL" onChange={onChangeShortUrl} value={shortUrl} />
-            </Form.Group>
+    const onClickBack = (event) => {
+        history.goBack(0);
+    }
 
-            <Form.Group controlId="formGridAnswersTarget">
-                <Form.Label>Answers Target</Form.Label>
-                <Form.Control type="number" placeholder="3" onChange={onChangeAnswersTarget} value={answersTarget} />
-            </Form.Group>
-
-            <Form.Group controlId="formGridQuestion">
-                <Form.Label>Question</Form.Label>
-                <Form.Control placeholder="Question" onChange={onChangeQuestion} value={question} />
-            </Form.Group>
-
-            {options.map((option, id) => {
-                return <Form.Group controlId="formGridOption">
-
-                    <Form.Label>Option {id + 1}</Form.Label>
-                    <Form.Control placeholder="Option" onChange={e => onChangeOption(e, id)} value={option} />
+    if (isLoading) {
+        return <Loading />
+    } else {
+        return (
+            <Form onSubmit={onClickSubmit} className="custom-card">
+                <Form.Group controlId="formGridShortUrl">
+                    <Form.Label>Short URL</Form.Label>
+                    <Form.Control placeholder="Enter short URL" onChange={onChangeShortUrl} value={shortUrl} />
                 </Form.Group>
-            })}
 
-            <Form.Group controlId="formGridAddOption">
+                <Form.Group controlId="formGridAnswersTarget">
+                    <Form.Label>Answers Target</Form.Label>
+                    <Form.Control type="number" placeholder="3" onChange={onChangeAnswersTarget} value={answersTarget} />
+                </Form.Group>
+
+                <Form.Group controlId="formGridQuestion">
+                    <Form.Label>Question</Form.Label>
+                    <Form.Control placeholder="Question" onChange={onChangeQuestion} value={question} />
+                </Form.Group>
+
+                {options.map((option, id) => {
+                    return <Form.Group controlId="formGridOption">
+
+                        <Form.Label>Option {id + 1}</Form.Label>
+                        <Form.Control placeholder="Option" onChange={e => onChangeOption(e, id)} value={option} />
+                    </Form.Group>
+                })}
+
                 <Button onClick={onClickAddOptionButton}>
                     Add option
                 </Button>
-            </Form.Group>
 
-            <Button variant="primary" type="submit">
-                Create
-                    <Spinner
-                    animation={animation}
-                    size="sm"
-                    role="status"
-                    aria-hidden="true"
-                    visible="false"
-                />
-            </Button>
-        </Form>
-    );
+                <div className="create-divider"></div>
+
+                {invalid &&
+                    <div class="alert alert-danger invalid-register" role="alert">
+                        Failed to create quiz
+                    </div>
+                }
+
+                <Button variant="success" type="submit">
+                    Create
+                </Button>
+
+                <div className="logout-divider"></div>
+
+                <Button variant="dark" onClick={onClickBack}>
+                    Back
+                </Button>
+            </Form>
+        );
+    }
 }
 
 export default CreateQuiz;

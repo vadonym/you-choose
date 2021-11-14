@@ -9,6 +9,7 @@ import { useState } from 'react';
 import CreateQuiz from './CreateQuiz';
 import Header from './Header';
 import Home from './Home';
+import Footer from "./Footer"
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("token") != null);
@@ -77,6 +78,7 @@ function App() {
             />
           </Switch>
         </div>
+        <Footer />
       </BrowserRouter>
     </div >
   );

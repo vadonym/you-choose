@@ -100,6 +100,11 @@ def create_quiz():
             'answers_target': answers_target
         }
 
+        texts = list(filter(lambda text: text != "", texts))
+
+        if len(texts) < 2:
+            raise Exception("Invalid number of options")
+
         _, res = io_service.post('/quizzes', data)
 
         quiz_id = res['id']

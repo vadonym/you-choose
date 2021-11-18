@@ -33,8 +33,8 @@ function AnswerQuiz({ quiz, setLoading }) {
             <Form.Label>{quiz.question}</Form.Label>
         </Form.Group>
 
-        {quiz.options.map((option) => {
-            return <Button className="option-button" onClick={e => onClickSubmit(e, option.id)}>
+        {quiz.options.map((option, id) => {
+            return <Button className="option-button" key={`button-option-${id}`} onClick={e => onClickSubmit(e, option.id)}>
                 {option.text}
             </Button>
         })}

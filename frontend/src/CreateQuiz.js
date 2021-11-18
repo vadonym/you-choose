@@ -96,7 +96,7 @@ function CreateQuiz() {
                 </Form.Group>
 
                 {options.map((option, id) => {
-                    return <Form.Group controlId="formGridOption">
+                    return <Form.Group controlId="formGridOption" key={`group-option-${id}`}>
 
                         <Form.Label>Option {id + 1}</Form.Label>
                         <Form.Control placeholder="Option" onChange={e => onChangeOption(e, id)} value={option} />

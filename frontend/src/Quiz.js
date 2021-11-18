@@ -71,30 +71,30 @@ function Quiz(props) {
     const [quiz, setQuiz] = useState(undefined)
     const history = useHistory();
 
-    const loadQuiz = () => {
-        axios
-            .get(`http://localhost:80/api/quizzes/short_url/${shortUrl}`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            })
-            .then((res) => {
-                setQuiz(res.data)
-                setLoading(false)
-            })
-            .catch((e) => {
-                setInvalid(true)
-                setLoading(false)
-            });
-    }
-
     const onClickBack = () => {
         history.push("/")
     }
 
     useEffect(() => {
+        const loadQuiz = async () => {
+            axios
+                .get(`http://localhost:80/api/quizzes/short_url/${shortUrl}`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                })
+                .then((res) => {
+                    setQuiz(res.data)
+                    setLoading(false)
+                })
+                .catch((e) => {
+                    setInvalid(true)
+                    setLoading(false)
+                });
+        }
+
         loadQuiz()
-    }, [])
+    }, [shortUrl])
 
     var content = <></>
 

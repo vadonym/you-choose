@@ -110,7 +110,7 @@ function CreateQuiz() {
                 <div className="create-divider"></div>
 
                 {invalid &&
-                    <div class="alert alert-danger invalid-register" role="alert">
+                    <div className="alert alert-danger invalid-register" role="alert">
                         Failed to create quiz
                     </div>
                 }

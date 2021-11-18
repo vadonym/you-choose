@@ -88,7 +88,7 @@ function Quiz(props) {
             });
     }
 
-    const onClickBack = (event) => {
+    const onClickBack = () => {
         history.push("/")
     }
 
@@ -104,7 +104,7 @@ function Quiz(props) {
         </div>
     } else {
         if (invalid) {
-            content = <div class="alert alert-danger invalid-register" role="alert">
+            content = <div className="alert alert-danger invalid-register" role="alert">
                 Invalid short URL
             </div>
         } else if (quiz.answered) {

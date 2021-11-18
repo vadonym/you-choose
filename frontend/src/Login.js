@@ -65,7 +65,7 @@ function Register({ setIsLoggedIn }) {
 
                 <Form.Group controlId="formGridButtons" id="group-buttons">
                     {invalid &&
-                        <div class="alert alert-danger invalid-login" role="alert">
+                        <div className="alert alert-danger invalid-login" role="alert">
                             Invalid email or password
                         </div>
                     }

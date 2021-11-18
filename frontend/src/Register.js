@@ -74,7 +74,7 @@ function Register() {
                     </Form.Group>
 
                     {invalid &&
-                        <div class="alert alert-danger invalid-register" role="alert">
+                        <div className="alert alert-danger invalid-register" role="alert">
                             Failed to register
                         </div>
                     }

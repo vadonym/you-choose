@@ -16,10 +16,26 @@ services:
         paths:
           - /auth
 
+  - name: kong_core_quizzes_create
+    url: http://core_quizzes_create:5000/api/quizzes
+    routes:
+      - name: core_quizzes_create
+        paths:
+          - /api/quizzes$
+        methods:
+          - POST
+
+  - name: kong_core_quizzes_query
+    url: http://core_quizzes_query:5000/api/quizzes
+    routes:
+      - name: core_quizzes_query
+        paths:
+          - /api/quizzes
+
   - name: kong_core
     url: http://core:5000/api
     routes:
-      - name: core-service
+      - name: core
         paths:
           - /api
 

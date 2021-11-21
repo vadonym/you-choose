@@ -1,7 +1,6 @@
 version: "3.8"
 
 services:
-
   database:
     build:
       context: ./database
@@ -13,6 +12,8 @@ services:
     networks:
       - database_adminer
       - database_io
+      - database_io_quizzes_create
+      - database_io_quizzes_query
     volumes:
       - database_volume:/var/lib/postgresql/data
     secrets:
@@ -53,6 +54,42 @@ services:
       - database_io
       - core_io
       - auth_io
+    
+  io_quizzes_create:
+    build:
+      context: ./io_quizzes_create
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_USER: /run/secrets/secret_database_user
+      DATABASE_PASSWORD: /run/secrets/secret_database_password
+      DATABASE_DB: /run/secrets/secret_database_db
+    secrets:
+      - secret_database_user
+      - secret_database_password
+      - secret_database_db
+    volumes:
+      - ./io_quizzes_create:/app
+    networks:
+      - database_io_quizzes_create
+      - core_quizzes_create_io_quizzes_create
+
+  io_quizzes_query:
+    build:
+      context: ./io_quizzes_query
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_USER: /run/secrets/secret_database_user
+      DATABASE_PASSWORD: /run/secrets/secret_database_password
+      DATABASE_DB: /run/secrets/secret_database_db
+    secrets:
+      - secret_database_user
+      - secret_database_password
+      - secret_database_db
+    volumes:
+      - ./io_quizzes_query:/app
+    networks:
+      - database_io_quizzes_query
+      - core_quizzes_query_io_quizzes_query
 
   core:
     build:
@@ -67,6 +104,28 @@ services:
       - core_email
       - auth_core
       - kong_core
+
+  core_quizzes_create:
+    build:
+      context: ./core_quizzes_create
+      dockerfile: Dockerfile
+    volumes:
+      - ./core_quizzes_create:/app
+    networks:
+      - core_quizzes_create_io_quizzes_create
+      - auth_core_quizzes_create
+      - kong_core_quizzes_create
+
+  core_quizzes_query:
+    build:
+      context: ./core_quizzes_query
+      dockerfile: Dockerfile
+    volumes:
+      - ./core_quizzes_query:/app
+    networks:
+      - core_quizzes_query_io_quizzes_query
+      - auth_core_quizzes_query
+      - kong_core_quizzes_query
 
   auth:
     build:
@@ -84,6 +143,8 @@ services:
       - auth_io
       - auth_core
       - kong_auth
+      - auth_core_quizzes_create
+      - auth_core_quizzes_query
 
   adminer:
     image: adminer
@@ -113,6 +174,8 @@ services:
       - kong_core
       - kong_adminer
       - frontend_kong
+      - kong_core_quizzes_create
+      - kong_core_quizzes_query
 
   frontend:
     build:
@@ -142,6 +205,15 @@ networks:
   kong_auth:
   kong_core:
   frontend_kong:
+  database_io_quizzes_create:
+  database_io_quizzes_query:
+  core_io_quizzes_query:
+  core_quizzes_create_io_quizzes_create:
+  auth_core_quizzes_create:
+  kong_core_quizzes_create:
+  core_quizzes_query_io_quizzes_query:
+  kong_core_quizzes_query:
+  auth_core_quizzes_query:
 
 volumes:
   database_volume:
